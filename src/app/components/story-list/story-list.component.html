@@ -1,0 +1,25 @@
+<div class="container">
+  <h1> Hacker News Latest Stories </h1>
+  
+  <div class="search-container">
+    <input type="text" [(ngModel)]="searchTerm" placeholder="Search" (keyup.enter)="search()">
+    <button (click)="search()">Search</button>
+    <button (click)="loadStories()" *ngIf="isSearching">Clear Search</button>
+  </div>
+
+  <div class="stories-container">
+    <div class="story-card" *ngFor="let story of stories">
+      <h3>{{ story.title }}</h3>
+      <a *ngIf="story.url" [href]="story.url" target="_blank" rel="noopener noreferrer">
+        {{ getDomain(story.url) }}
+      </a>
+      <span *ngIf="!story.url">URL not available</span>
+    </div>
+  </div>
+
+  <div class="pagination" *ngIf="!isSearching">
+    <button (click)="prevPage()" [disabled]="currentPage <= 1">Previous</button>
+    <span> Page {{ currentPage }} </span>
+    <button (click)="nextPage()">Next</button>
+  </div>
+</div>

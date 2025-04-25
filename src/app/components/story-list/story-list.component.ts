@@ -14,47 +14,62 @@ export class StoryListComponent implements OnInit {
   pageSize = 10;
   searchTerm = '';
   isSearching = false;
+  isLoading = false;
 
-  constructor(private hackerNewsService: HackerNewsService) { }
+  constructor(private hackerNewsService: HackerNewsService) {}
 
   ngOnInit(): void {
     this.loadStories();
   }
 
   loadStories(): void {
-    this.isSearching = false;
+    this.isLoading = true;
     this.hackerNewsService.getNewestStories(this.currentPage, this.pageSize)
-      .subscribe(stories => this.stories = stories);
+      .subscribe({
+        next: stories => {
+          this.stories = stories;
+          this.isLoading = false;
+        },
+        error: () => this.isLoading = false
+      });
   }
 
   search(): void {
-    if (!this.searchTerm.trim()) {
-      this.loadStories();
-      return;
-    }
-
+    if (!this.searchTerm.trim()) return;
+    
     this.isSearching = true;
+    this.isLoading = true;
     this.hackerNewsService.searchStories(this.searchTerm)
-      .subscribe(stories => this.stories = stories);
+      .subscribe({
+        next: stories => {
+          this.stories = stories;
+          this.isLoading = false;
+        },
+        error: () => this.isLoading = false
+      });
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.isSearching = false;
+    this.loadStories();
   }
 
   nextPage(): void {
-    if (this.isSearching) return;
     this.currentPage++;
     this.loadStories();
   }
 
   prevPage(): void {
-    if (this.isSearching || this.currentPage <= 1) return;
-    this.currentPage--;
-    this.loadStories();
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadStories();
+    }
   }
 
   getDomain(url: string): string {
-    if (!url) return '';
     try {
-      const domain = new URL(url).hostname.replace('www.', '');
-      return domain;
+      return new URL(url).hostname.replace('www.', '');
     } catch {
       return url;
     }

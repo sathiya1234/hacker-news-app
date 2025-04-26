@@ -11,9 +11,14 @@
 
   <div class="stories-container" *ngIf="!isLoading">
     <div class="story-card" *ngFor="let story of stories">
-      <h3>{{ story.title }}</h3>
+      <!-- <h3>{{ story.title }}</h3>
       <a *ngIf="story.url" [href]="story.url" target="_blank">{{ getDomain(story.url) }}</a>
-      <span *ngIf="!story.url">No URL available</span>
+      <span *ngIf="!story.url">No URL available</span> -->
+
+      <h3>
+        <a *ngIf="story.url" [href]="story.url" target="_blank" rel="noopener noreferrer">{{ story.title }}</a>
+        <span *ngIf="!story.url">{{ story.title }}</span>
+      </h3>
     </div>
   </div>
 

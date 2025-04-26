@@ -11,10 +11,6 @@
 
   <div class="stories-container" *ngIf="!isLoading">
     <div class="story-card" *ngFor="let story of stories">
-      <!-- <h3>{{ story.title }}</h3>
-      <a *ngIf="story.url" [href]="story.url" target="_blank">{{ getDomain(story.url) }}</a>
-      <span *ngIf="!story.url">No URL available</span> -->
-
       <h3>
         <a *ngIf="story.url" [href]="story.url" target="_blank" rel="noopener noreferrer">{{ story.title }}</a>
         <span *ngIf="!story.url">{{ story.title }}</span>
@@ -24,7 +20,7 @@
 
   <div class="pagination" *ngIf="!isSearching && !isLoading">
     <button (click)="prevPage()" [disabled]="currentPage <= 1">Previous</button>
-    <span>Page {{ currentPage }}</span>
-    <button (click)="nextPage()">Next</button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage >= totalPages">Next</button>
   </div>
 </div>

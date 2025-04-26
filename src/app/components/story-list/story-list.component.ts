@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HackerNewsService } from '../../services/hacker-news.service'
+import { HackerNewsService } from '../../services/hacker-news.service';
 import { Story } from '../../models/story.model';
 
 @Component({
@@ -12,6 +12,8 @@ export class StoryListComponent implements OnInit {
   stories: Story[] = [];
   currentPage = 1;
   pageSize = 10;
+  totalCount = 0; // Total count of stories
+  totalPages = 0; // Total number of pages
   searchTerm = '';
   isSearching = false;
   isLoading = false;
@@ -26,8 +28,10 @@ export class StoryListComponent implements OnInit {
     this.isLoading = true;
     this.hackerNewsService.getNewestStories(this.currentPage, this.pageSize)
       .subscribe({
-        next: stories => {
-          this.stories = stories;
+        next: (response) => {
+          this.stories = response.stories; // Updated to reflect StoryModel
+          this.totalCount = response.totalCount;
+          this.totalPages = Math.ceil(this.totalCount / this.pageSize); // Calculate total pages
           this.isLoading = false;
         },
         error: () => this.isLoading = false
@@ -41,7 +45,7 @@ export class StoryListComponent implements OnInit {
     this.isLoading = true;
     this.hackerNewsService.searchStories(this.searchTerm)
       .subscribe({
-        next: stories => {
+        next: (stories) => {
           this.stories = stories;
           this.isLoading = false;
         },
@@ -56,8 +60,10 @@ export class StoryListComponent implements OnInit {
   }
 
   nextPage(): void {
-    this.currentPage++;
-    this.loadStories();
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadStories();
+    }
   }
 
   prevPage(): void {

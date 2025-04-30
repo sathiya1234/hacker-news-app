@@ -2,25 +2,39 @@
   <h1>Hacker News Top Stories</h1>
   
   <div class="search-container">
-    <input type="text" [(ngModel)]="searchTerm" placeholder="Search stories...">
-    <button (click)="search()">Search</button>
-    <button (click)="clearSearch()" *ngIf="isSearching">Clear</button>
+    <input type="text" [(ngModel)]="searchTerm" 
+           (keyup.enter)="onSearch()" 
+           placeholder="Search stories by title...">
+    <button (click)="onSearch()">Search</button>
+    <button (click)="clearSearch()" *ngIf="searchTerm">Clear</button>
   </div>
 
-  <div *ngIf="isLoading" class="loader">Loading...</div>
+  <div *ngIf="isLoading" class="loader-container">
+    <div class="loader"></div>
+  </div>
 
   <div class="stories-container" *ngIf="!isLoading">
     <div class="story-card" *ngFor="let story of stories">
       <h3>
-        <a *ngIf="story.url" [href]="story.url" target="_blank" rel="noopener noreferrer">{{ story.title }}</a>
-        <span *ngIf="!story.url">{{ story.title }}</span>
+        <!-- Show clickable link only if URL exists -->
+        <a *ngIf="story.url; else noUrl" 
+           [href]="story.url" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           class="story-link">
+          {{ story.title }}
+        </a>
+        <!-- Show plain text when no URL -->
+        <ng-template #noUrl>
+          <span class="story-title">{{ story.title }}</span>
+        </ng-template>
       </h3>
     </div>
   </div>
 
-  <div class="pagination" *ngIf="!isSearching && !isLoading">
+  <div class="pagination" *ngIf="totalPages > 1 && !isLoading">
     <button (click)="prevPage()" [disabled]="currentPage <= 1">Previous</button>
-    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <span>Page {{ currentPage }} of {{ totalPages }} ({{ totalCount }} stories)</span>
     <button (click)="nextPage()" [disabled]="currentPage >= totalPages">Next</button>
   </div>
 </div>

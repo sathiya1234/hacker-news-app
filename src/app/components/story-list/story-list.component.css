@@ -125,3 +125,17 @@
   height: 100%;
   background: rgba(255, 255, 255, 0.7);
 }
+
+.story-link {
+  color: #1a0dab;
+  text-decoration: none;
+}
+
+.story-link:hover {
+  text-decoration: underline;
+}
+
+.story-title {
+  color: #333;
+  cursor: default;
+}

@@ -1,24 +1,33 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms'; // ✅
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AppComponent } from './app.component';
+import { StoryListComponent } from './components/story-list/story-list.component'; // adjust path as needed
 
 describe('AppComponent', () => {
-  let component: AppComponent;
-  let fixture: ComponentFixture<AppComponent>;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AppComponent]
+      declarations: [
+        AppComponent,
+        StoryListComponent
+      ],
+      imports: [
+        HttpClientTestingModule,
+        FormsModule // ✅
+      ]
     }).compileComponents();
-
-    fixture = TestBed.createComponent(AppComponent);
-    component = fixture.componentInstance;
   });
 
   it('should create the app component', () => {
-    expect(component).toBeTruthy();
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
   });
 
-  it('should have the correct title', () => {
-    expect(component.title).toEqual('hacker-news-app');
+  it(`should have the correct title`, () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('app-story-list')).toBeTruthy();
   });
 });

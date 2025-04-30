@@ -3,6 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Story } from '../models/story.model';
 
+interface StoryResponse {
+  stories: Story[];
+  totalCount: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -11,11 +16,17 @@ export class HackerNewsService {
 
   constructor(private http: HttpClient) { }
 
-  getNewestStories(page: number, pageSize: number): Observable<{ stories: Story[], totalCount: number }> {
-    return this.http.get<{ stories: Story[], totalCount: number }>(`${this.apiUrl}/GetNewestStories?page=${page}&pageSize=${pageSize}`);
-  }
+  getNewestStories(
+    page: number, 
+    pageSize: number, 
+    searchTerm?: string
+  ): Observable<StoryResponse> {
+    const params = {
+      page: page.toString(),
+      pageSize: pageSize.toString(),
+      ...(searchTerm && { searchTerm })
+    };
 
-  searchStories(term: string): Observable<Story[]> {
-    return this.http.get<Story[]>(`${this.apiUrl}/SearchStories?term=${term}`);
+    return this.http.get<StoryResponse>(`${this.apiUrl}/GetNewestStories`, { params });
   }
 }

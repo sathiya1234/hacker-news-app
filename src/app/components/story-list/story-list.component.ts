@@ -12,10 +12,9 @@ export class StoryListComponent implements OnInit {
   stories: Story[] = [];
   currentPage = 1;
   pageSize = 10;
-  totalCount = 0; // Total count of stories
-  totalPages = 0; // Total number of pages
+  totalCount = 0;
+  totalPages = 0;
   searchTerm = '';
-  isSearching = false;
   isLoading = false;
 
   constructor(private hackerNewsService: HackerNewsService) {}
@@ -26,37 +25,29 @@ export class StoryListComponent implements OnInit {
 
   loadStories(): void {
     this.isLoading = true;
-    this.hackerNewsService.getNewestStories(this.currentPage, this.pageSize)
+    this.hackerNewsService.getNewestStories(this.currentPage, this.pageSize, this.searchTerm)
       .subscribe({
         next: (response) => {
-          this.stories = response.stories; // Updated to reflect StoryModel
+          this.stories = response.stories;
           this.totalCount = response.totalCount;
-          this.totalPages = Math.ceil(this.totalCount / this.pageSize); // Calculate total pages
+          this.totalPages = Math.ceil(this.totalCount / this.pageSize);
           this.isLoading = false;
         },
-        error: () => this.isLoading = false
+        error: () => {
+          this.isLoading = false;
+          // Handle error (show toast/message)
+        }
       });
   }
 
-  search(): void {
-    if (!this.searchTerm.trim()) return;
-    
-    this.isSearching = true;
-    this.isLoading = true;
-    this.hackerNewsService.searchStories(this.searchTerm)
-      .subscribe({
-        next: (stories) => {
-          this.stories = stories;
-          this.isLoading = false;
-        },
-        error: () => this.isLoading = false
-      });
+  onSearch(): void {
+    this.currentPage = 1; // Reset to first page when searching
+    this.loadStories();
   }
 
   clearSearch(): void {
     this.searchTerm = '';
-    this.isSearching = false;
-    this.loadStories();
+    this.onSearch();
   }
 
   nextPage(): void {
